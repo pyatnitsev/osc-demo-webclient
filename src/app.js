@@ -6,7 +6,8 @@ window.jQuery = $;
 window.$ = $;
 
 const config = {
-    websocket: { port: 8080 }, // порт WebSocket сервера
+    host : '192.168.1.2',
+    port: 8081
 }
 
 // Инициализируем таймер и OSC клиента
