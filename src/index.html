@@ -4,17 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local OCS Service</title>
-    <!-- Bootstrap CSS будет включен через Webpack -->
 </head>
 <body>
-<div class="container mt-5">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Введите текст" id="textInput" maxlength="100">
-    </div>
-</div>
 
-<!-- Bootstrap JS и зависимости будут включены через Webpack -->
-<!-- Клиентский JavaScript -->
+<main class="main-wrapper">
+    <span class="logo-link">
+        <img class="logo" src="assets/logo.svg" alt="Нацпроект строй">
+    </span>
+    <span class="logo-link logo-link--blue">
+        <img class="logo" src="assets/logo-white.svg" alt="Нацпроект строй">
+    </span>
+    <div class="form-container">
+        <form action="javascript:void(0);" class="form" id="form">
+            <textarea name="text" id="textInput" class="form__message" placeholder="Текст"></textarea>
+            <button class="form__button" id="sendButton">Отправить</button>
+        </form>
+    </div>
+</main>
+
 <script src="bundle.js"></script> <!-- Убедитесь, что путь к файлу совпадает с output в Webpack -->
 </body>
 </html>

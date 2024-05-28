@@ -1,0 +1,105 @@
+:root {
+  --accent-color: #282828;
+}
+
+html,
+body,
+body *,
+body *::before,
+body &::after {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.main-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 4.8vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;;
+  background-image: url(./bg.svg);
+  background-position: 0 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.logo {
+  width: 100%;
+  max-width: 66.45vw;
+}
+
+.logo-link--blue {
+  display: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.46vw;
+}
+
+.form__message {
+  width: 100%;
+  height: 23.58vw;
+  padding: 2.24vw 2.53vw;
+  font-size: 1.95vw;
+  font-weight: 400;
+  line-height: 115%;
+  border: none;
+  border-radius: 2.92vw;
+  box-shadow: 0 0 100px 0 #FFFFFF80 inset;
+  background-color: #FFFFFF66;
+  backdrop-filter: blur(100px);
+  resize: none;
+  color: var(--accent-color);
+}
+
+.form__button {
+  padding: 1.66vw 0;
+  font-size: 1.85vw;
+  line-height: 115%;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  border-radius: 2.92vw;
+  box-shadow: 0px 0px 100px 0px #00000080 inset;
+  background-color: var(--accent-color);
+  color: #FFF;
+  cursor: pointer;
+}
+
+/* Theme */
+.main-wrapper.theme-blue {
+  background-image: url(./bg-blue.svg);
+}
+
+.main-wrapper.theme-blue .logo-link {
+  display: none;
+}
+
+.main-wrapper.theme-blue .logo-link--blue {
+  display: block;
+}
+
+.main-wrapper.theme-blue .form__button {
+  box-shadow: none;
+  background-color: #FFF;
+  color: var(--accent-color);
+}
+
+/* Responsive */
+@media only screen and (max-height: 1024px) {
+  .main-wrapper {
+    gap: 10vw;
+  }
+}
