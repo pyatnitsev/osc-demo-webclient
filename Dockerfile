@@ -1,6 +1,8 @@
 # Используем официальный образ Node.js в качестве базового
 FROM node:22-alpine3.19
 
+ENV NODE_ENV=development
+
 # Устанавливаем рабочую директорию в контейнере
 WORKDIR /app
 
