@@ -20,9 +20,9 @@ body {
 }
 
 .main-wrapper {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
-  padding: 4.8vw;
+  padding: 100px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;;
