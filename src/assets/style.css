@@ -98,8 +98,8 @@ body {
 }
 
 /* Responsive */
-@media only screen and (max-height: 1024px) {
+/* @media only screen and (max-height: 1024px) {
   .main-wrapper {
     gap: 10vw;
   }
-}
+} */
