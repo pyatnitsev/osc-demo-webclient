@@ -57,7 +57,7 @@ body {
   border: none;
   border-radius: 2.92vw;
   box-shadow: 0 0 100px 0 #FFFFFF80 inset;
-  background-color: #FFFFFF66;
+  background-color: #FFFFFFaa;
   backdrop-filter: blur(100px);
   resize: none;
   color: var(--accent-color);
