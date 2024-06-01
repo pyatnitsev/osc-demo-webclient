@@ -20,8 +20,45 @@ const config = {
     port: 8081
 }
 
+let osc;
+const maxRetries = 10;
+let retryCount = 0;
 
-const osc = new OSC({ plugin: new OSC.WebsocketClientPlugin(config) });
+function setupOSC() {
+    osc = new OSC({ plugin: new OSC.WebsocketClientPlugin(config) });
+
+    osc.on('open', () => {
+        console.log('WebSocket connection opened');
+        retryCount = 0; // Сброс счетчика попыток при успешном подключении
+    });
+
+    osc.on('close', () => {
+        console.log('WebSocket connection closed');
+        retryConnection();
+    });
+
+    osc.on('error', (error) => {
+        console.log('WebSocket error:', error);
+        osc.close(); // Закрыть соединение при ошибке
+    });
+
+    osc.open(); // открыть соединение WebSocket
+}
+
+function retryConnection() {
+    if (retryCount < maxRetries) {
+        const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 30000); // Экспоненциальная задержка до 30 секунд
+        retryCount++;
+        setTimeout(() => {
+            console.log(`Attempting to reconnect... (${retryCount}/${maxRetries})`);
+            setupOSC();
+        }, retryDelay);
+    } else {
+        console.log('Max retries reached. Could not reconnect to WebSocket.');
+    }
+}
+
+setupOSC();
 
 document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -39,8 +76,4 @@ document.getElementById('form').addEventListener('submit', function(e) {
     document.getElementById('textInput').value = '';
     // Отправляем сообщение
     osc.send(message);
-
-
 });
-
-osc.open(); // открыть соединение WebSocket
