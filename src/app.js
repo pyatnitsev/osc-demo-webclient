@@ -7,6 +7,7 @@ window.$ = $;
 import bgBluePath from './assets/bg-blue.svg';
 import bgPath from './assets/bg.svg';
 
+// Установка фоновой картинки
 if (document.querySelector('.main-wrapper')) {
     document.querySelector('.main-wrapper').style.backgroundImage = `url(${bgPath})`;
 }
@@ -15,6 +16,7 @@ if (document.querySelector('.main-wrapper.theme-blue')) {
     document.querySelector('.main-wrapper.theme-blue').style.backgroundImage = `url(${bgBluePath})`;
 }
 
+// Настройка OSC
 const config = {
     host: process.env.WS_HOST || 'localhost',
     port: process.env.WS_PORT ? Number(process.env.WS_PORT) : 8081
@@ -60,26 +62,21 @@ function retryConnection() {
 
 setupOSC();
 
-function toggleActiveClass(buttons, activeClass = 'active') {
-    if (!buttons || (!NodeList.prototype.isPrototypeOf(buttons) && !Array.isArray(buttons))) {
-        console.error('Первый аргумент должен быть NodeList или массивом элементов');
-        return;
-    }
+// --- Делегирование на кнопки, безопасно для dev-server ---
+const buttonsWrapper = document.querySelector('.buttons-wrapper');
+if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) { // костыль для dev-server
+    buttonsWrapper.addEventListener('click', event => {
+        const button = event.target.closest('.main-button');
+        if (!button) {
+            return;
+        }
 
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (button.classList.contains(activeClass)) {
-                button.classList.remove(activeClass);
-            } else {
-                buttons.forEach(btn => btn.classList.remove(activeClass));
-                button.classList.add(activeClass);
-            }
-        });
+        const buttons = buttonsWrapper.querySelectorAll('.main-button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
     });
+    buttonsWrapper.hasButtonHandler = true; // защита от дубля в dev-mode
 }
-
-const buttons = document.querySelectorAll('.main-button');
-toggleActiveClass(buttons);
 
 /*
 document.getElementById('form').addEventListener('submit', function(e) {
@@ -98,4 +95,6 @@ document.getElementById('form').addEventListener('submit', function(e) {
     document.getElementById('textInput').value = '';
     // Отправляем сообщение
     osc.send(message);
-});*/
+});
+*/
+
