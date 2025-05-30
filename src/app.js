@@ -62,39 +62,32 @@ function retryConnection() {
 
 setupOSC();
 
-// --- Делегирование на кнопки, безопасно для dev-server ---
 const buttonsWrapper = document.querySelector('.buttons-wrapper');
-if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) { // костыль для dev-server
+if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
     buttonsWrapper.addEventListener('click', event => {
         const button = event.target.closest('.main-button');
-        if (!button) {
-            return;
-        }
+        if (!button) return;
 
+        const isActive = button.classList.contains('main-button-active');
         const buttons = buttonsWrapper.querySelectorAll('.main-button');
-        buttons.forEach(btn => btn.classList.remove('main-button—active'));
-        button.classList.add('main-button—active');
+        buttons.forEach(btn => btn.classList.remove('main-button-active'));
+
+        if (!isActive) {
+            button.classList.add('main-button-active');
+            onButtonStateChanged(button, true);
+        } else {
+            // Можно убрать else если не хотите "отжимать". Только одна всегда активна.
+            onButtonStateChanged(button, false);
+        }
     });
     buttonsWrapper.hasButtonHandler = true;
 }
 
-/*
-document.getElementById('form').addEventListener('submit', function(e) {
-    e.preventDefault();
+function onButtonStateChanged(button, isActive) {
+    const name = button.dataset.name;
 
-    // Получаем значение из текстового поля
-    var text = document.getElementById('textInput').value;
+    const message = new OSC.Message('/button'+name, isActive ? 1 : 0);
+    console.log(`Кнопка "${name}"`, isActive ? 'нажата' : 'отжата');
 
-    if (text === '') {
-        return;
-    }
-
-    var encodedText = btoa(unescape(encodeURIComponent(text)));
-    // Создание OSC-сообщения с этим текстом как аргументом
-    const message = new OSC.Message('/sendText', encodedText);
-    document.getElementById('textInput').value = '';
-    // Отправляем сообщение
     osc.send(message);
-});
-*/
-
+}
