@@ -72,10 +72,10 @@ if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) { // костыль дл
         }
 
         const buttons = buttonsWrapper.querySelectorAll('.main-button');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+        buttons.forEach(btn => btn.classList.remove('main-button—active'));
+        button.classList.add('main-button—active');
     });
-    buttonsWrapper.hasButtonHandler = true; // защита от дубля в dev-mode
+    buttonsWrapper.hasButtonHandler = true;
 }
 
 /*
