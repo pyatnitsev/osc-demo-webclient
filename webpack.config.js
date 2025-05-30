@@ -53,6 +53,7 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env.WS_HOST': JSON.stringify(process.env.WS_HOST || ''),
             'process.env.WS_PORT': JSON.stringify(process.env.WS_PORT || ''),
+            'process.env.RESET_TIME': JSON.stringify(process.env.RESET_TIME || '0'),
         })
     ],
     devServer: {
