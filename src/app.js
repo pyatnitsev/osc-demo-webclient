@@ -68,12 +68,12 @@ if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
         const button = event.target.closest('.main-button');
         if (!button) return;
 
-        const isActive = button.classList.contains('main-button-active');
+        const isActive = button.classList.contains('main-button--active');
         const buttons = buttonsWrapper.querySelectorAll('.main-button');
-        buttons.forEach(btn => btn.classList.remove('main-button-active'));
+        buttons.forEach(btn => btn.classList.remove('main-button--active'));
 
         if (!isActive) {
-            button.classList.add('main-button-active');
+            button.classList.add('main-button--active');
             onButtonStateChanged(button, true);
         } else {
             // Можно убрать else если не хотите "отжимать". Только одна всегда активна.
