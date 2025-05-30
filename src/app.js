@@ -68,16 +68,22 @@ if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
         const button = event.target.closest('.main-button');
         if (!button) return;
 
-        const isActive = button.classList.contains('main-button-active');
         const buttons = buttonsWrapper.querySelectorAll('.main-button');
-        buttons.forEach(btn => btn.classList.remove('main-button-active'));
+        const prevActive = buttonsWrapper.querySelector('.main-button-active');
 
-        if (!isActive) {
+        // Если клик по уже активной — снимаем активность и отправляем "отжата"
+        if (button.classList.contains('main-button-active')) {
+            button.classList.remove('main-button-active');
+            onButtonStateChanged(button, false);
+        } else {
+            // Отжать предыдущую, если была
+            if (prevActive && prevActive !== button) {
+                prevActive.classList.remove('main-button-active');
+                onButtonStateChanged(prevActive, false);
+            }
+            // Активировать новую
             button.classList.add('main-button-active');
             onButtonStateChanged(button, true);
-        } else {
-            // Можно убрать else если не хотите "отжимать". Только одна всегда активна.
-            onButtonStateChanged(button, false);
         }
     });
     buttonsWrapper.hasButtonHandler = true;
