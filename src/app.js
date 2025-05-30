@@ -60,6 +60,28 @@ function retryConnection() {
 
 setupOSC();
 
+function toggleActiveClass(buttons, activeClass = 'active') {
+    if (!buttons || (!NodeList.prototype.isPrototypeOf(buttons) && !Array.isArray(buttons))) {
+        console.error('Первый аргумент должен быть NodeList или массивом элементов');
+        return;
+    }
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (button.classList.contains(activeClass)) {
+                button.classList.remove(activeClass);
+            } else {
+                buttons.forEach(btn => btn.classList.remove(activeClass));
+                button.classList.add(activeClass);
+            }
+        });
+    });
+}
+
+const buttons = document.querySelectorAll('.main-button');
+toggleActiveClass(buttons);
+
+/*
 document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -76,4 +98,4 @@ document.getElementById('form').addEventListener('submit', function(e) {
     document.getElementById('textInput').value = '';
     // Отправляем сообщение
     osc.send(message);
-});
+});*/

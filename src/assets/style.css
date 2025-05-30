@@ -1,5 +1,6 @@
 :root {
   --accent-color: #282828;
+  --button-color: #077BC2;
 }
 
 html,
@@ -22,10 +23,11 @@ body {
 .main-wrapper {
   width: 100%;
   min-height: 100vh;
-  padding: 100px;
+  padding: 50px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;;
+  gap: 60px;
   background-image: url(./bg.svg);
   background-position: 0 0;
   background-size: cover;
@@ -95,6 +97,52 @@ body {
   box-shadow: none;
   background-color: #FFF;
   color: var(--accent-color);
+}
+
+.buttons-wrapper {
+  flex-grow: 1;
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 15px;
+}
+
+.main-button {
+  min-height: 630px;
+  padding: 48px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+  font-family: 'Verdana', sans-serif;
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 100%;
+  text-align: left;
+  border: none;
+  border-radius: 52px;
+  box-shadow: 0 0 100px 0 #FFFFFF80 inset;
+  cursor: pointer;
+  opacity: 0.7;
+  background-color: var(--button-color);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: white;
+}
+.main-button--active {
+  opacity: 1;
+}
+.main-button--nps {
+  background-size: 90%;
+}
+.main-button--man {
+  background-size: 50%;
+}
+.main-button--tech {
+  background-size: 80%;
+}
+.main-button--bridge {
+  background-size: 80%;
 }
 
 /* Responsive */
