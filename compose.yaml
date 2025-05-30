@@ -5,8 +5,6 @@ services:
     build: .
     ports:
       - "${APP_PORT:-8094}:8094"
-    volumes:
-      - .:/app
     environment:
       NODE_ENV: development
       WS_HOST: localhost
