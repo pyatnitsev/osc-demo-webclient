@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-      - "8094:8094"
+      - "${APP_PORT:-8094}:8094"
     volumes:
       - .:/app
     environment:
