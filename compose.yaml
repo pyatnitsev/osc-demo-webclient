@@ -4,9 +4,11 @@ services:
   app:
     build: .
     ports:
-      - "8081:8094"
+      - "8094:8094"
     volumes:
       - .:/app
     environment:
       NODE_ENV: development
+      WS_HOST: localhost
+      WS_PORT: 8080
     command: npm start

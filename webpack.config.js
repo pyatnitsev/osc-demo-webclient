@@ -1,40 +1,41 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
-    entry: './src/app.js', // точка входа вашего приложения
+    entry: './src/app.js',
     output: {
-        path: path.resolve(__dirname, 'dist'), // путь к каталогу выходных файлов
-        filename: 'bundle.js' // название создаваемого файла
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js'
     },
     module: {
         rules: [
             {
-                test: /\.js$/, // регулярное выражение для файлов .js
+                test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env'] // используйте пресеты babel
+                        presets: ['@babel/preset-env']
                     }
                 }
             },
             {
-                test: /\.css$/, // регулярное выражение для файлов .css
-                use: ['style-loader', 'css-loader'] // добавление style-loader и css-loader
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
             },
             {
-                test: /\.(png|jpe?g|gif)$/, // регулярное выражение для файлов изображений
-                use: ['file-loader'] // использование file-loader
+                test: /\.(png|jpe?g|gif)$/,
+                use: ['file-loader']
             },
             {
-                test: /\.svg$/, // регулярное выражение для файлов .svg
+                test: /\.svg$/,
                 use: {
                     loader: 'file-loader',
                     options: {
-                        name: '[name].[ext]', // сохраняет оригинальное имя файла и расширение
-                        outputPath: 'assets', // путь для копирования файлов
+                        name: '[name].[ext]',
+                        outputPath: 'assets',
                     }
                 }
             }
@@ -42,16 +43,22 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html' // исходный файл HTML
+            template: './src/index.html'
         }),
         new CopyWebpackPlugin({
             patterns: [
-                { from: 'src/assets', to: 'assets' } // копирование папки assets в dist/assets
+                { from: 'src/assets', to: 'assets' }
             ]
+        }),
+        new webpack.DefinePlugin({
+            'process.env.WS_HOST': JSON.stringify(process.env.WS_HOST || ''),
+            'process.env.WS_PORT': JSON.stringify(process.env.WS_PORT || ''),
         })
     ],
     devServer: {
-        contentBase: './dist', // путь к разрабатываемому контенту
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
         host: '0.0.0.0',
         port: 8094,
     }

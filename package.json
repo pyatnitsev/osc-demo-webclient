@@ -4,8 +4,8 @@
   "description": "A local client for sending OSC messages",
   "main": "index.js",
   "scripts": {
-    "build": "webpack build",
-    "start": "webpack serve --mode development --open --host 0.0.0.0 --port 8094"
+    "build": "npx webpack build",
+    "start": "npx webpack serve --mode development --host 0.0.0.0 --port 8094"
   },
   "dependencies": {
     "jquery": "^3.7.1",
@@ -23,9 +23,9 @@
     "path": "^0.12.7",
     "style-loader": "^4.0.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.24.4",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2"
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "author": "Author",

@@ -16,9 +16,9 @@ if (document.querySelector('.main-wrapper.theme-blue')) {
 }
 
 const config = {
-    host : '192.168.1.2',
-    port: 8081
-}
+    host: process.env.WS_HOST || 'localhost',
+    port: process.env.WS_PORT ? Number(process.env.WS_PORT) : 8081
+};
 
 let osc;
 const maxRetries = 10;
