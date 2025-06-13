@@ -10,11 +10,13 @@ RUN npm install
 ARG WS_HOST=localhost
 ARG WS_PORT=8080
 ARG RESET_TIME=0
+ARG LOGO_PRESS_TIME=2000
 
 # Пробрасываем их как ENV, чтобы npm run build их увидел
 ENV WS_HOST=${WS_HOST}
 ENV WS_PORT=${WS_PORT}
 ENV RESET_TIME=${RESET_TIME}
+ENV LOGO_PRESS_TIME=${LOGO_PRESS_TIME}
 
 RUN echo "WS_PORT is $WS_PORT"
 

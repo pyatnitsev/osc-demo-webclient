@@ -10,6 +10,7 @@ services:
       WS_HOST: ${WS_HOST}
       WS_PORT: ${WS_PORT}
       RESET_TIME: ${RESET_TIME}
+      LOGO_PRESS_TIME: ${LOGO_PRESS_TIME}
     volumes:
       - .:/app
       - /app/node_modules
@@ -22,6 +23,7 @@ services:
         WS_HOST: ${WS_HOST}
         WS_PORT: ${WS_PORT}
         RESET_TIME: ${RESET_TIME}
+        LOGO_PRESS_TIME: ${LOGO_PRESS_TIME}
     ports:
       - "${APP_PORT:-8094}:8094"
     environment:

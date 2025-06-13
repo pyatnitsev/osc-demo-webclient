@@ -133,13 +133,13 @@ function onAllButtonsOff() {
 }
 
 // Логика длинного нажатия на логотип
-const LONG_PRESS_TIME = 2000; // 2 секунды в миллисекундах
+const LOGO_PRESS_TIME = Number(process.env.LOGO_PRESS_TIME || 2000);
 let longPressTimer = null;
 let longPressTriggered = false;
 
 function onLogoLongPress() {
     const message = new OSC.Message('/logo', 1);
-    console.log('Логотип долго нажат, отправлено событие /logo');
+    console.log('Логотип долго нажат, отправлено событие /logo ', LOGO_PRESS_TIME);
     osc.send(message);
 }
 
@@ -151,7 +151,7 @@ function setupLogoLongPress(selector) {
             longPressTimer = setTimeout(() => {
                 longPressTriggered = true;
                 onLogoLongPress();
-            }, LONG_PRESS_TIME);
+            }, LOGO_PRESS_TIME);
         });
         logoEl.addEventListener('mouseup', () => {
             clearTimeout(longPressTimer);
@@ -166,7 +166,7 @@ function setupLogoLongPress(selector) {
             longPressTimer = setTimeout(() => {
                 longPressTriggered = true;
                 onLogoLongPress();
-            }, LONG_PRESS_TIME);
+            }, LOGO_PRESS_TIME);
         });
         logoEl.addEventListener('touchend', () => {
             clearTimeout(longPressTimer);

@@ -57,6 +57,7 @@ module.exports = (env, argv) => {
                 'process.env.WS_HOST': JSON.stringify(process.env.WS_HOST || ''),
                 'process.env.WS_PORT': JSON.stringify(process.env.WS_PORT || ''),
                 'process.env.RESET_TIME': JSON.stringify(process.env.RESET_TIME || '0'),
+                'process.env.LOGO_PRESS_TIME': JSON.stringify(process.env.LOGO_PRESS_TIME || '2000'),
                 'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development')
             })
         ],
