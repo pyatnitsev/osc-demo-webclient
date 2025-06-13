@@ -8,7 +8,7 @@
 
 ### Production
 
-Для запуска в режиме разработки: `docker compose up --build app-prod`
+Для запуска в режиме прода: `docker compose up --build app-prod`
 Для PROD окружения переменные задаются в compose.yaml, в args.
 
 По-умолчанию приложение запустится на http://localhost:8094
