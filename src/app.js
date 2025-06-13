@@ -8,7 +8,6 @@ import bgBluePath from './assets/bg-blue.svg';
 import bgPath from './assets/bg.svg';
 
 const RESET_TIME = Number(process.env.RESET_TIME || 0); // в секундах, 0 = автоотжатие отключено
-const LOGO_PRESS_TIME = Number(process.env.LOGO_PRESS_TIME || 2000);
 
 const config = {
     host: process.env.WS_HOST || 'localhost',
@@ -137,53 +136,24 @@ function onAllButtonsOff() {
     osc.send(message);
 }
 
-// --- LOGO LONG PRESS LOGIC ---
-let longPressTimer = null;
-let longPressTriggered = false;
-
-function onLogoLongPress() {
+// --- LOGO CLICK/SIMPLE TAP LOGIC ---
+function onLogoClick() {
     if (!osc) return;
     const message = new OSC.Message('/logo', 1);
-    console.log('Логотип долго нажат, отправлено событие /logo ', LOGO_PRESS_TIME);
+    console.log('Логотип нажат, отправлено событие /logo');
     osc.send(message);
 }
 
-function setupLogoLongPress(selector) {
+function setupLogoClick(selector) {
     document.querySelectorAll(selector).forEach(logoEl => {
-        // Для мыши
-        logoEl.addEventListener('mousedown', () => {
-            longPressTriggered = false;
-            longPressTimer = setTimeout(() => {
-                longPressTriggered = true;
-                onLogoLongPress();
-            }, LOGO_PRESS_TIME);
-        });
-        logoEl.addEventListener('mouseup', () => {
-            clearTimeout(longPressTimer);
-        });
-        logoEl.addEventListener('mouseleave', () => {
-            clearTimeout(longPressTimer);
-        });
+        logoEl.addEventListener('click', onLogoClick);
 
-        // Для touch-устройств
-        logoEl.addEventListener('touchstart', () => {
-            longPressTriggered = false;
-            longPressTimer = setTimeout(() => {
-                longPressTriggered = true;
-                onLogoLongPress();
-            }, LOGO_PRESS_TIME);
-        });
-        logoEl.addEventListener('touchend', () => {
-            clearTimeout(longPressTimer);
-        });
-        logoEl.addEventListener('touchmove', () => {
-            clearTimeout(longPressTimer);
-        });
-
-        // Отключить стандартный клик, если длинное нажатие сработало
-        logoEl.addEventListener('click', e => {
-            if (longPressTriggered) e.preventDefault();
-        });
+        // Для мобильных: отдельно поддержка tap/touchstart, если нужно
+        logoEl.addEventListener('touchstart', function(e) {
+            // Чтобы tap не дублировал событие click, можно отменить всплытие
+            e.preventDefault();
+            onLogoClick();
+        }, { passive: false });
     });
 }
-setupLogoLongPress('.logo-link');
+setupLogoClick('.logo-link');

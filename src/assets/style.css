@@ -37,6 +37,7 @@ body {
 .logo {
   width: 100%;
   max-width: 66.45vw;
+  cursor: pointer;
 }
 
 .logo-link--blue {

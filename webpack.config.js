@@ -10,7 +10,7 @@ module.exports = (env, argv) => {
         entry: './src/app.js',
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'bundle.js'
+            filename: 'bundle.[contenthash].js'
         },
         module: {
             rules: [
@@ -29,16 +29,12 @@ module.exports = (env, argv) => {
                     use: ['style-loader', 'css-loader']
                 },
                 {
-                    test: /\.(png|jpe?g|gif)$/,
-                    use: ['file-loader']
-                },
-                {
-                    test: /\.svg$/,
+                    test: /\.(png|jpe?g|gif|svg)$/,
                     use: {
                         loader: 'file-loader',
                         options: {
-                            name: '[name].[ext]',
-                            outputPath: 'assets',
+                            name: '[name].[contenthash].[ext]',
+                            outputPath: 'assets'
                         }
                     }
                 }
