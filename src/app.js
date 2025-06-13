@@ -8,24 +8,26 @@ import bgBluePath from './assets/bg-blue.svg';
 import bgPath from './assets/bg.svg';
 
 const RESET_TIME = Number(process.env.RESET_TIME || 0); // в секундах, 0 = автоотжатие отключено
+const LOGO_PRESS_TIME = Number(process.env.LOGO_PRESS_TIME || 2000);
 
-// Установка фоновой картинки
-if (document.querySelector('.main-wrapper')) {
-    document.querySelector('.main-wrapper').style.backgroundImage = `url(${bgPath})`;
-}
-
-if (document.querySelector('.main-wrapper.theme-blue')) {
-    document.querySelector('.main-wrapper.theme-blue').style.backgroundImage = `url(${bgBluePath})`;
-}
-
-// Настройка OSC
 const config = {
     host: process.env.WS_HOST || 'localhost',
     port: process.env.WS_PORT ? Number(process.env.WS_PORT) : 8081
 };
 
+// --- STATUS UI ---
+function showConnectionStatus(status) {
+    const el = document.getElementById('connection-status');
+    if (!el) return;
+    if (status === 'connected') {
+        el.style.display = 'none';
+    } else if (status === 'disconnected') {
+        el.style.display = 'block';
+    }
+}
+
+// --- OSC CONNECTION WITH RECONNECT ---
 let osc;
-const maxRetries = 10;
 let retryCount = 0;
 
 function setupOSC() {
@@ -34,10 +36,12 @@ function setupOSC() {
     osc.on('open', () => {
         console.log('WebSocket connection opened');
         retryCount = 0; // Сброс счетчика попыток при успешном подключении
+        showConnectionStatus('connected');
     });
 
     osc.on('close', () => {
         console.log('WebSocket connection closed');
+        showConnectionStatus('disconnected');
         retryConnection();
     });
 
@@ -46,26 +50,31 @@ function setupOSC() {
         osc.close(); // Закрыть соединение при ошибке
     });
 
-    osc.open(); // открыть соединение WebSocket
+    osc.open();
 }
 
+// --- INFINITE RECONNECT ---
 function retryConnection() {
-    if (retryCount < maxRetries) {
-        const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 30000); // Экспоненциальная задержка до 30 секунд
-        retryCount++;
-        setTimeout(() => {
-            console.log(`Attempting to reconnect... (${retryCount}/${maxRetries})`);
-            setupOSC();
-        }, retryDelay);
-    } else {
-        console.log('Max retries reached. Could not reconnect to WebSocket.');
-    }
+    const retryDelay = Math.min(1000 * Math.pow(2, retryCount), 30000); // до 30 сек максимум между попытками
+    retryCount++;
+    setTimeout(() => {
+        console.log(`Attempting to reconnect... (try #${retryCount}, delay ${retryDelay}ms)`);
+        setupOSC();
+    }, retryDelay);
 }
 
 setupOSC();
 
-let resetTimer = null;
+// --- BACKGROUND IMAGE ---
+if (document.querySelector('.main-wrapper')) {
+    document.querySelector('.main-wrapper').style.backgroundImage = `url(${bgPath})`;
+}
+if (document.querySelector('.main-wrapper.theme-blue')) {
+    document.querySelector('.main-wrapper.theme-blue').style.backgroundImage = `url(${bgBluePath})`;
+}
 
+// --- BUTTON LOGIC ---
+let resetTimer = null;
 const buttonsWrapper = document.querySelector('.buttons-wrapper');
 if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
     buttonsWrapper.addEventListener('click', event => {
@@ -76,9 +85,7 @@ if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
         const prevActive = buttonsWrapper.querySelector('.main-button--active');
 
         // Сброс таймера на каждый клик, если надо
-        if (RESET_TIME > 0) {
-            resetButtonsTimer(buttons);
-        }
+        if (RESET_TIME > 0) resetButtonsTimer(buttons);
 
         if (button.classList.contains('main-button--active')) {
             button.classList.remove('main-button--active');
@@ -86,9 +93,7 @@ if (buttonsWrapper && !buttonsWrapper.hasButtonHandler) {
 
             // --- проверяем осталась ли активная кнопка ---
             const anyActive = buttonsWrapper.querySelector('.main-button--active');
-            if (!anyActive) {
-                onAllButtonsOff();
-            }
+            if (!anyActive) onAllButtonsOff();
         } else {
             if (prevActive && prevActive !== button) {
                 prevActive.classList.remove('main-button--active');
@@ -113,13 +118,12 @@ function resetButtonsTimer(buttons) {
                 anyWasActive = true;
             }
         });
-        if (anyWasActive)  {
-            onAllButtonsOff();
-        }
+        if (anyWasActive)  onAllButtonsOff();
     }, RESET_TIME * 1000);
 }
 
 function onButtonStateChanged(button, isActive) {
+    if (!osc) return;
     const name = button.dataset.name;
     const message = new OSC.Message('/button' + name, isActive ? 1 : 0);
     console.log(`Кнопка "${name}"`, isActive ? 'нажата' : 'отжата');
@@ -127,17 +131,18 @@ function onButtonStateChanged(button, isActive) {
 }
 
 function onAllButtonsOff() {
+    if (!osc) return;
     const message = new OSC.Message('/off', 1);
     console.log('Все кнопки отжаты, отправлено событие /off = 1');
     osc.send(message);
 }
 
-// Логика длинного нажатия на логотип
-const LOGO_PRESS_TIME = Number(process.env.LOGO_PRESS_TIME || 2000);
+// --- LOGO LONG PRESS LOGIC ---
 let longPressTimer = null;
 let longPressTriggered = false;
 
 function onLogoLongPress() {
+    if (!osc) return;
     const message = new OSC.Message('/logo', 1);
     console.log('Логотип долго нажат, отправлено событие /logo ', LOGO_PRESS_TIME);
     osc.send(message);
@@ -175,12 +180,10 @@ function setupLogoLongPress(selector) {
             clearTimeout(longPressTimer);
         });
 
-        // Отключить стандартный клик, если длинное нажатие сработало (не обязательно, по ситуации)
+        // Отключить стандартный клик, если длинное нажатие сработало
         logoEl.addEventListener('click', e => {
             if (longPressTriggered) e.preventDefault();
         });
     });
 }
-
-// Вызов функции для обоих логотипов (или укажи нужный селектор)
 setupLogoLongPress('.logo-link');

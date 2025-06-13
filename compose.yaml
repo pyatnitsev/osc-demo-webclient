@@ -25,7 +25,7 @@ services:
         RESET_TIME: ${RESET_TIME}
         LOGO_PRESS_TIME: ${LOGO_PRESS_TIME}
     ports:
-      - "${APP_PORT:-8094}:8094"
+      - "${APP_PORT:-80}:8094"
     environment:
       NODE_ENV: production
       WS_HOST: ${WS_HOST}
