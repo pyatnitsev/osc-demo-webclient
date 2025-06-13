@@ -131,3 +131,56 @@ function onAllButtonsOff() {
     console.log('Все кнопки отжаты, отправлено событие /off = 1');
     osc.send(message);
 }
+
+// Логика длинного нажатия на логотип
+const LONG_PRESS_TIME = 2000; // 2 секунды в миллисекундах
+let longPressTimer = null;
+let longPressTriggered = false;
+
+function onLogoLongPress() {
+    const message = new OSC.Message('/logo', 1);
+    console.log('Логотип долго нажат, отправлено событие /logo');
+    osc.send(message);
+}
+
+function setupLogoLongPress(selector) {
+    document.querySelectorAll(selector).forEach(logoEl => {
+        // Для мыши
+        logoEl.addEventListener('mousedown', () => {
+            longPressTriggered = false;
+            longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                onLogoLongPress();
+            }, LONG_PRESS_TIME);
+        });
+        logoEl.addEventListener('mouseup', () => {
+            clearTimeout(longPressTimer);
+        });
+        logoEl.addEventListener('mouseleave', () => {
+            clearTimeout(longPressTimer);
+        });
+
+        // Для touch-устройств
+        logoEl.addEventListener('touchstart', () => {
+            longPressTriggered = false;
+            longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                onLogoLongPress();
+            }, LONG_PRESS_TIME);
+        });
+        logoEl.addEventListener('touchend', () => {
+            clearTimeout(longPressTimer);
+        });
+        logoEl.addEventListener('touchmove', () => {
+            clearTimeout(longPressTimer);
+        });
+
+        // Отключить стандартный клик, если длинное нажатие сработало (не обязательно, по ситуации)
+        logoEl.addEventListener('click', e => {
+            if (longPressTriggered) e.preventDefault();
+        });
+    });
+}
+
+// Вызов функции для обоих логотипов (или укажи нужный селектор)
+setupLogoLongPress('.logo-link');
