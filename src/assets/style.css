@@ -14,10 +14,17 @@ body &::after {
   box-sizing: border-box;
 }
 
+html {
+  height: -webkit-fill-available;
+}
+
 body {
   width: 100vw;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-wrapper {
@@ -122,13 +129,14 @@ body {
   border-radius: 52px;
   box-shadow: 0 0 100px 0 #FFFFFF80 inset;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.5;
   background-color: var(--button-color);
   background-repeat: no-repeat;
   color: white;
 }
 .main-button--active {
   opacity: 1;
+  box-shadow: 0 0 0 6px #FFFFFF inset, 0 0 100px 0 #FFFFFF80 inset;
 }
 .main-button--nps {
   background-size: 70%;
