@@ -1,0 +1,22 @@
+{
+  "name": "Нацпроект строй",
+  "short_name": "Нацпроект строй",
+  "description": "Интерфейс управления OCS через WebSocket (Нацпроект строй)",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#282828",
+  "theme_color": "#077BC2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

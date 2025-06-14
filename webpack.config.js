@@ -46,7 +46,9 @@ module.exports = (env, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: 'src/assets', to: 'assets' }
+                    { from: 'src/assets', to: 'assets' },
+                    { from: 'src/manifest.json', to: 'manifest.json' },
+                    { from: 'src/service-worker.js', to: 'service-worker.js' }
                 ]
             }),
             new webpack.DefinePlugin({
