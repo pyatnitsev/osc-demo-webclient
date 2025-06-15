@@ -1,4 +1,3 @@
-import OSC from 'osc-js';
 import './assets/style.css';
 import $ from 'jquery';
 window.jQuery = $;
