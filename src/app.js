@@ -91,18 +91,16 @@ function handleStateUpdate(payload) {
 
 function handleEvent(payload) {
     if (payload.off) {
+        // Снятие всех кнопок (UI), но НЕ дергаем onButtonStateChanged/onAllButtonsOff!
         document.querySelectorAll('.main-button.main-button--active')
             .forEach(btn => btn.classList.remove('main-button--active'));
     }
 
     if (payload.logo) {
+        // Только UI: снятие активности со всех кнопок (аналогично off)
         document.querySelectorAll('.main-button.main-button--active')
             .forEach(btn => btn.classList.remove('main-button--active'));
-
-        const anyActive = buttonsWrapper.querySelector('.main-button--active');
-        if (!anyActive) {
-            onAllButtonsOff();
-        }
+        // не трогаем onButtonStateChanged!
     }
 }
 
@@ -182,6 +180,11 @@ function onButtonStateChanged(button, isActive) {
     }));
 
     console.log(`Кнопка "${name}"`, isActive ? 'нажата' : 'отжата');
+
+    const anyActive = buttonsWrapper.querySelector('.main-button--active');
+    if (!anyActive) {
+        onAllButtonsOff();
+    }
 }
 
 function onAllButtonsOff() {
