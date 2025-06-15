@@ -8,11 +8,8 @@ import bgBluePath from './assets/bg-blue.svg';
 import bgPath from './assets/bg.svg';
 
 const RESET_TIME = Number(process.env.RESET_TIME || 0); // в секундах, 0 = автоотжатие отключено
-
-const config = {
-    host: process.env.WS_HOST || 'localhost',
-    port: process.env.WS_PORT ? Number(process.env.WS_PORT) : 8081
-};
+const WS_HOST = process.env.WS_HOST || 'localhost';
+const WS_PORT = process.env.WS_PORT ? Number(process.env.WS_PORT) : 8080
 
 // --- STATUS UI ---
 function showConnectionStatus(status) {
@@ -25,31 +22,45 @@ function showConnectionStatus(status) {
     }
 }
 
-// --- OSC CONNECTION WITH RECONNECT ---
-let osc;
+let ws;
 let retryCount = 0;
 
-function setupOSC() {
-    osc = new OSC({ plugin: new OSC.WebsocketClientPlugin(config) });
+function setupWS() {
 
-    osc.on('open', () => {
+    ws = new WebSocket(`ws://${WS_HOST}:${WS_PORT}`);
+
+    ws.onopen = () => {
         console.log('WebSocket connection opened');
         retryCount = 0; // Сброс счетчика попыток при успешном подключении
         showConnectionStatus('connected');
-    });
+    };
 
-    osc.on('close', () => {
+    ws.onclose = () => {
         console.log('WebSocket connection closed');
         showConnectionStatus('disconnected');
         retryConnection();
-    });
+    }
 
-    osc.on('error', (error) => {
+    ws.onerror = (error) => {
         console.log('WebSocket error:', error);
-        osc.close(); // Закрыть соединение при ошибке
-    });
+        ws.close();
+    }
 
-    osc.open();
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        console.log('Получено с сервера:', msg);
+
+        if (msg.type === 'state_update' && msg.payload) {
+            handleStateUpdate(msg.payload);
+        }
+        if (msg.type === 'state_full' && msg.payload) {
+            console.log('Применяем state_full:', msg.payload);
+            handleStateUpdate(msg.payload);
+        }
+        if (msg.type === 'event') {
+            handleEvent(msg.payload);
+        }
+    };
 }
 
 // --- INFINITE RECONNECT ---
@@ -58,11 +69,45 @@ function retryConnection() {
     retryCount++;
     setTimeout(() => {
         console.log(`Attempting to reconnect... (try #${retryCount}, delay ${retryDelay}ms)`);
-        setupOSC();
+        setupWS();
     }, retryDelay);
 }
 
-setupOSC();
+function handleStateUpdate(payload) {
+    Object.entries(payload).forEach(([key, value]) => {
+        // Находим кнопку по data-name
+        if (key.startsWith('button')) {
+            const name = key.replace('button', '');
+            const button = document.querySelector(`.main-button[data-name="${name}"]`);
+            if (button) {
+                if (value) {
+                    button.classList.add('main-button--active');
+                } else {
+                    button.classList.remove('main-button--active');
+                }
+            }
+        }
+    });
+}
+
+function handleEvent(payload) {
+    if (payload.off) {
+        document.querySelectorAll('.main-button.main-button--active')
+            .forEach(btn => btn.classList.remove('main-button--active'));
+    }
+
+    if (payload.logo) {
+        document.querySelectorAll('.main-button.main-button--active')
+            .forEach(btn => btn.classList.remove('main-button--active'));
+
+        const anyActive = buttonsWrapper.querySelector('.main-button--active');
+        if (!anyActive) {
+            onAllButtonsOff();
+        }
+    }
+}
+
+setupWS();
 
 // --- BACKGROUND IMAGE ---
 if (document.querySelector('.main-wrapper')) {
@@ -122,26 +167,59 @@ function resetButtonsTimer(buttons) {
 }
 
 function onButtonStateChanged(button, isActive) {
-    if (!osc) return;
+    if (!ws) return;
     const name = button.dataset.name;
-    const message = new OSC.Message('/button' + name, isActive ? 1 : 0);
+
+    ws.send(JSON.stringify({
+        type: "state_update",
+        payload: { ["button" + name]: isActive }
+    }));
+
+    ws.send(JSON.stringify({
+        type: "osc_send",
+        address: `/button${name}`,
+        valueType: "int",
+        value: isActive ? 1 : 0
+    }));
+
     console.log(`Кнопка "${name}"`, isActive ? 'нажата' : 'отжата');
-    osc.send(message);
 }
 
 function onAllButtonsOff() {
-    if (!osc) return;
-    const message = new OSC.Message('/off', 1);
+    if (!ws) return;
+
+    ws.send(JSON.stringify({
+        type: "event",
+        payload: { "off": true }
+    }));
+
+    ws.send(JSON.stringify({
+        type: "osc_send",
+        address: `/off`,
+        valueType: "int",
+        value: 1
+    }));
+
     console.log('Все кнопки отжаты, отправлено событие /off = 1');
-    osc.send(message);
 }
 
 // --- LOGO CLICK/SIMPLE TAP LOGIC ---
 function onLogoClick() {
-    if (!osc) return;
-    const message = new OSC.Message('/logo', 1);
+    if (!ws) return;
+
+    ws.send(JSON.stringify({
+        type: "event",
+        payload: { "logo": true }
+    }));
+
+    ws.send(JSON.stringify({
+        type: "osc_send",
+        address: `/logo`,
+        valueType: "int",
+        value: 1
+    }));
+
     console.log('Логотип нажат, отправлено событие /logo');
-    osc.send(message);
 }
 
 function setupLogoClick(selector) {
